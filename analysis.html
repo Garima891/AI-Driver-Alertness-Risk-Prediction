@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Impact Analysis — AI Driver Risk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/analysis.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>📊 Feature Impact Analysis</h1>
+                    <p>Understand how each driving factor influences accident risk</p>
+                </div>
+                <a href="/" class="btn-back">← Back to Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Summary Bar -->
+        <div class="summary-bar card" id="summaryBar">
+            <div class="summary-item">
+                <span class="summary-label">Current Risk Score</span>
+                <span class="summary-value" id="summaryScore">—</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Risk Level</span>
+                <span class="summary-value" id="summaryLevel">—</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Top Risk Factor</span>
+                <span class="summary-value" id="summaryTopFactor">—</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Simulating</span>
+                <span class="summary-value" id="summarySimFeature">—</span>
+            </div>
+        </div>
+
+        <!-- Dynamic explanation -->
+        <div class="card explanation-bar" id="explanationBar">
+            <span class="explanation-icon">💡</span>
+            <span id="explanationText">Run an analysis to see results.</span>
+        </div>
+
+        <div class="analysis-grid">
+
+            <!-- LEFT: Sensitivity Bars + Simulation Control -->
+            <div class="analysis-left">
+
+                <!-- Sensitivity Chart -->
+                <div class="card">
+                    <h2>🎯 Sensitivity Analysis</h2>
+                    <p class="subtitle">Shows how risk changes when each factor increases by +0.1 from its <strong>current</strong> value. Recalculates live as you simulate.</p>
+                    <div class="sensitivity-list" id="sensitivityList">
+                        <div class="loading-msg">Loading analysis…</div>
+                    </div>
+                </div>
+
+                <!-- Simulation Control -->
+                <div class="card">
+                    <h2>🔬 Dynamic Simulation</h2>
+                    <p class="subtitle">Adjust one parameter while all others stay fixed at recorded levels. See how risk shifts in real-time — ideal for what-if analysis.</p>
+
+                    <div class="sim-controls">
+                        <label for="simFeature">Parameter to Simulate</label>
+                        <select id="simFeature">
+                            <option value="overspeeding_severity">Overspeeding</option>
+                            <option value="drunk_driving_severity">Drunk Driving</option>
+                            <option value="traffic_violation_severity">Traffic Violations</option>
+                            <option value="mobile_use_severity">Mobile Usage</option>
+                            <option value="wrong_side_driving_severity">Wrong Lane Driving</option>
+                            <option value="sudden_braking_severity">Sudden Braking</option>
+                            <option value="driver_drowsy_score">Driver Drowsiness</option>
+                        </select>
+                    </div>
+
+                    <!-- Comparison: current vs modified -->
+                    <div class="comparison-row" id="comparisonRow" style="display:none;">
+                        <div class="comparison-box current">
+                            <div class="comparison-label">Current Risk</div>
+                            <div class="comparison-value" id="cmpCurrent">—</div>
+                        </div>
+                        <div class="comparison-arrow">→</div>
+                        <div class="comparison-box modified">
+                            <div class="comparison-label">Modified Risk</div>
+                            <div class="comparison-value" id="cmpModified">—</div>
+                        </div>
+                        <div class="comparison-delta" id="cmpDelta"></div>
+                    </div>
+
+                    <div class="sim-slider-wrap">
+                        <label>
+                            Adjust Value: <strong id="simSliderLabel">0.5</strong>
+                        </label>
+                        <input type="range" id="simSlider" min="0" max="1" step="0.05" value="0.5">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Line Chart -->
+            <div class="analysis-right">
+                <div class="card chart-card">
+                    <h2>📈 Risk Simulation Curve</h2>
+                    <p class="subtitle" id="curveSubtitle">How risk score changes as selected parameter varies (0 → 1)</p>
+                    <div class="chart-wrap">
+                        <canvas id="simulationChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Feature Contribution Bars -->
+                <div class="card chart-card">
+                    <h2>📊 Model Feature Importance <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:400;">(static model weights)</span></h2>
+                    <p class="subtitle">These are fixed weights from the trained Random Forest model. They do <strong>not</strong> change with your inputs — they show the model's learned feature priorities.</p>
+                    <div class="chart-wrap">
+                        <canvas id="contributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/static/analysis.js"></script>
+</body>
+</html>

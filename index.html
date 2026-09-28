@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Driver Alertness & Risk System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+    <div class="dashboard">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>AI Driver Alertness & Risk Prediction</h1>
+                    <p>Real-time contextual analysis for intelligent accident prevention</p>
+                </div>
+                <button id="muteBtn" class="mute-btn" title="Toggle audio alerts">🔔</button>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            
+            <!-- Left Panel: Inputs -->
+            <div class="card panel-left input-panel">
+                <h2>Simulated Sensor Inputs</h2>
+                <p class="subtitle">In real-world setups, these inputs stream directly from cameras, OBD2 sensors, and vehicle IoT.</p>
+
+                <div class="controls-grid">
+                    <div class="control-group slider-group">
+                        <label for="overspeeding_severity">Overspeeding <span>(<span id="val_overspeeding">0.00</span>)</span></label>
+                        <input type="range" id="overspeeding_severity" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+                    
+                    <div class="control-group slider-group">
+                        <label for="drunk_driving_severity">Drunk Driving <span>(<span id="val_drunk">0.00</span>)</span></label>
+                        <input type="range" id="drunk_driving_severity" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+
+                    <div class="control-group slider-group">
+                        <label for="traffic_violation_severity">Traffic Violations <span>(<span id="val_violation">0.00</span>)</span></label>
+                        <input type="range" id="traffic_violation_severity" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+
+                    <div class="control-group slider-group">
+                        <label for="mobile_use_severity">Mobile Usage <span>(<span id="val_mobile">0.00</span>)</span></label>
+                        <input type="range" id="mobile_use_severity" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+
+                    <div class="control-group slider-group">
+                        <label for="wrong_side_driving_severity">Wrong Lane Driving <span>(<span id="val_wronglane">0.00</span>)</span></label>
+                        <input type="range" id="wrong_side_driving_severity" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+
+                    <div class="control-group slider-group">
+                        <label for="sudden_braking_severity">Sudden Braking <span>(<span id="val_braking">0.00</span>)</span></label>
+                        <input type="range" id="sudden_braking_severity" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+
+                    <div class="control-group slider-group">
+                        <label for="driver_drowsy_score">Driver Drowsiness <span>(<span id="val_drowsy">0.00</span>)</span></label>
+                        <input type="range" id="driver_drowsy_score" min="0" max="1" step="0.01" value="0.0">
+                    </div>
+
+                    <div class="control-group select-group">
+                        <label for="road_type">Road Type</label>
+                        <select id="road_type">
+                            <option value="Urban">Urban</option>
+                            <option value="Highway">Highway</option>
+                            <option value="Rural">Rural</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group select-group">
+                        <label for="time_of_day">Time of Day</label>
+                        <select id="time_of_day">
+                            <option value="Morning">Morning</option>
+                            <option value="Afternoon">Afternoon</option>
+                            <option value="Evening">Evening</option>
+                            <option value="Night">Night</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group select-group">
+                        <label for="weather_condition">Weather Condition</label>
+                        <select id="weather_condition">
+                            <option value="Clear">Clear</option>
+                            <option value="Rain">Rain</option>
+                            <option value="Fog">Fog</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-predict" id="predictBtn">
+                        <span class="btn-text">Analyze Driving Risk</span>
+                        <div class="loader" id="loader"></div>
+                    </button>
+                    <button class="btn btn-reset" id="resetBtn">Reset</button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output & Insights -->
+            <div class="right-column">
+                
+                <!-- Main Output Widget -->
+                <div class="card output-widget" id="outputWidget">
+                    <!-- Row: Gauge + Details -->
+                    <div class="output-top-row">
+                        <div class="risk-ring-container">
+                            <div class="risk-ring" id="riskRing">
+                                <div class="risk-inner">
+                                    <span class="score" id="riskScoreVal">0.00</span>
+                                    <span class="percent" id="riskPercentVal">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="risk-details">
+                            <h3 id="riskLevelText">AWAITING PREDICTION...</h3>
+                            <p class="explanation" id="riskExplanation">Waiting for sensor data input.</p>
+                            <a href="/analysis" id="analysisLink" class="btn-analysis" style="display:none;">📊 View Detailed Analysis</a>
+                        </div>
+                    </div>
+
+                    <!-- Integrated Alerts Below Gauge -->
+                    <div class="integrated-alerts" id="integratedAlerts">
+                        <div class="alert-placeholder">No alerts yet. Run analysis to see results.</div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Hidden audio element for high risk -->
+    <audio id="alertSound" src="data:audio/wav;base64,UklGRqYDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YYIDAACAgICAgICAf3+Afn5/f39+fH98e3t7eHp4d3Z0c3BxbmxoZ2RjYF5cW1pVVFJRUE9OTUxKSkhIR0ZFRERDQ0BBQD8+Pjw7Ojk4Njc2NTQzMjIxMC8uLSwrKikpKCcmJSQjIiIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAAICAgICAgICAf3+Afn5/f39+fH98e3t7eHp4d3Z0c3BxbmxoZ2RjYF5cW1pVVFJRUE9OTUxKSkhIR0ZFRERDQ0BBQD8+Pjw7Ojk4Njc2NTQzMjIxMC8uLSwrKikpKCcmJSQjIiIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAAICAgICAgICAf3+Afn5/f39+fH98e3t7eHp4d3Z0c3BxbmxoZ2RjYF5cW1pVVFJRUE9OTUxKSkhIR0ZFRERDQ0BBQD8+Pjw7Ojk4Njc2NTQzMjIxMC8uLSwrKikpKCcmJSQjIiIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAAICAgICAgICAf3+Afn5/f39+fH98e3t7eHp4d3Z0c3BxbmxoZ2RjYF5cW1pVVFJRUE9OTUxKSkhIR0ZFRERDQ0BBQD8+Pjw7Ojk4Njc2NTQzMjIxMC8uLSwrKikpKCcmJSQjIiIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAAICAgICAgICAf3+Afn5/f39+fH98e3t7eHp4d3Z0c3BxbmxoZ2RjYF5cW1pVVFJRUE9OTUxKSkhIR0ZFRERDQ0BBQD8+Pjw7Ojk4Njc2NTQzMjIxMC8uLSwrKikpKCcmJSQjIiIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAAICAgICAgICAf3+Afn5/f39+fH98e3t7eHp4d3Z0c3BxbmxoZ2RjYF5cW1pVVFJRUE9OTUxKSkhIR0ZFRERDQ0BBQD8+Pjw7Ojk4Njc2NTQzMjIxMC8uLSwrKikpKCcmJSQjIiIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEA" preload="auto"></audio>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
